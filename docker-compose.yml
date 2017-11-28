@@ -4,10 +4,6 @@ volumes:
     prometheus_data: {}
     grafana_data: {}
 
-networks:
-  front-tier:
-  back-tier:
-
 services:
 
   prometheus:
@@ -27,13 +23,9 @@ services:
       - alertmanager:alertmanager
     depends_on:
       - cadvisor
-    networks:
-      - back-tier
     restart: always
     deploy:
-      placement:
-        constraints:
-          - node.hostname == moby
+      mode: global
 
   node-exporter:
     image: prom/node-exporter
@@ -41,15 +33,13 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
-    command: 
-      - '--path.procfs=/host/proc' 
+    command:
+      - '--path.procfs=/host/proc'
       - '--path.sysfs=/host/sys'
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     ports:
       - 9100:9100
-    networks:
-      - back-tier
     restart: always
     deploy:
       mode: global
@@ -60,16 +50,13 @@ services:
       - 9093:9093
     volumes:
       - ./alertmanager/:/etc/alertmanager/
-    networks:
-      - back-tier
     restart: always
     command:
       - '-config.file=/etc/alertmanager/config.yml'
       - '-storage.path=/alertmanager'
     deploy:
-      placement:
-        constraints:
-          - node.hostname == moby
+      mode: global
+
   cadvisor:
     image: google/cadvisor
     volumes:
@@ -79,8 +66,6 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     ports:
       - 8080:8080
-    networks:
-      - back-tier
     restart: always
     deploy:
       mode: global
@@ -95,6 +80,3 @@ services:
       - grafana_data:/var/lib/grafana
     env_file:
       - config.monitoring
-    networks:
-      - back-tier
-      - front-tier
