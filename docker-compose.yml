@@ -78,7 +78,7 @@ services:
       - 3000:3000
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./grafana/config:/etc/grafana/config
+      - ./grafana/plugins:/var/lib/grafana/plugins
     env_file:
       - config.monitoring
 
