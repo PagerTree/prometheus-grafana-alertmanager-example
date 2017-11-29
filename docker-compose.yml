@@ -80,3 +80,9 @@ services:
       - grafana_data:/var/lib/grafana
     env_file:
       - config.monitoring
+
+  blackbox_exporter:
+    image: prom/blackbox-exporter
+    ports:
+      - 9115:9115
+    restart: always
