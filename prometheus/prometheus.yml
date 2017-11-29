@@ -38,19 +38,18 @@ scrape_configs:
 
     static_configs:
          - targets: ['localhost:9090','cadvisor:8080','node-exporter:9100']
-
-   - job_name: 'blackbox'
-      metrics_path: /probe
-      params:
-        module: [http_2xx]  # Look for a HTTP 200 response.
-      static_configs:
-        - targets:
-          - http://prometheus.io    # Target to probe with http.
-          - https://prometheus.io   # Target to probe with https.
-      relabel_configs:
-        - source_labels: [__address__]
-          target_label: __param_target
-        - source_labels: [__param_target]
-          target_label: instance
-        - target_label: __address__
-          replacement: 127.0.0.1:9115  # Blackbox exporter.
+  - job_name: 'blackbox'
+    metrics_path: /probe
+    params:
+      module: [http_2xx]  # Look for a HTTP 200 response.
+    static_configs:
+      - targets:
+        - http://prometheus.io    # Target to probe with http.
+        - https://prometheus.io   # Target to probe with https.
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 127.0.0.1:9115  # Blackbox exporter.
