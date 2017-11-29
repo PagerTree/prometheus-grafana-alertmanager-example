@@ -1,4 +1,5 @@
 GF_SECURITY_ADMIN_PASSWORD=foobar
 GF_USERS_ALLOW_SIGN_UP=false
+GF_PATHS_DATASOURCES=/etc/grafana/config/datasources.json
 GF_DASHBOARDS_ENABLED=true
-GF_DASHBOARDS_PATH="/etc/grafana/dashboards"
+GF_DASHBOARDS_PATH=/etc/grafana/config/dashboards
