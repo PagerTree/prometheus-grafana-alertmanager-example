@@ -25,16 +25,20 @@ Before we get started installing the Prometheus stack. Ensure you install the la
 
     $ curl https://raw.githubusercontent.com/PagerTree/prometheus-grafana-alertmanager-example/master/install.sh | sudo sh
 
-Clone the project locally to your Docker host.
+This will create several services:
 
-If you would like to change which targets should be monitored or make configuration changes edit the [/prometheus/prometheus.yml](https://github.com/vegasbrianc/prometheus/blob/version-2/prometheus/prometheus.yml) file. The targets section is where you define what should be monitored by Prometheus. The names defined in this file are actually sourced from the service name in the docker-compose file. If you wish to change names of the services you can add the "container_name" parameter in the `docker-compose.yml` file.
+| Service | Port | Description |
+| --- |:---:| ---:|
+| Prometheus | :9090 | Data Aggregator |
+| Alert Manager | :9093 | Adds Alerting for Prometheus Checks |
+| Grafana | :3000 | UI To Show Prometheus Data |
+| Node Exporter | :9100 | Data Collector |
+| CA Advisor | :8080 | Collect resource usage of the Docker container |
 
-Once configurations are done let's start it up. From the /prometheus project directory run the following command:
 
-    $ docker stack deploy -c docker-compose.yml prom
+If you would like to change which targets should be monitored or make configuration changes edit the [/prometheus/prometheus.yml](/prometheus/prometheus.yml) file. The targets section is where you define what should be monitored by Prometheus.
 
-
-That's it the `docker stack deploy' command deploys the entire Grafana and Prometheus stack automagically to the Docker Swarm. By default cAdvisor and node-exporter are set to Global deployment which means they will propogate to every docker host attached to the Swarm.
+That's it the install script deploys the entire Grafana and Prometheus stack automagically to the Docker Swarm. By default cAdvisor and node-exporter are set to Global deployment which means they will propogate to every docker host attached to the Swarm.
 
 The Grafana Dashboard is now accessible via: `http://<Host IP Address>:3000` for example http://192.168.10.1:3000
 
@@ -43,15 +47,8 @@ The Grafana Dashboard is now accessible via: `http://<Host IP Address>:3000` for
 
 In order to check the status of the newly created stack:
 
-    $ docker stack ps prom
+    $ ./status.sh
 
-View running services:
-
-    $ docker service ls
-
-View logs for a specific service
-
-    $ docker service logs prom_<service_name>
 
 ## Post Configuration
 Now we need to create the Prometheus Datasource in order to connect Grafana to Prometheus
