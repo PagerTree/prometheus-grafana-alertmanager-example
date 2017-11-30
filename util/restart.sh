@@ -1,4 +1,4 @@
 #!/bin/sh
 ./util/stop.sh
-sleep 5
+sleep 3
 ./util/start.sh
