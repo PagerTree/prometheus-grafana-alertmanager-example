@@ -1,31 +1,45 @@
 # Contents
 
-- Introduction
-  - [Overview](#a-prometheus--grafana-docker-compose-stack)
-  - [Pre-requisites](#pre-requisites)
-  - [Installation & Configuration](#installation--configuration)
-  	- [Post Configuration](#post-configuration)
-        - [Datasource Configuration](#datasource-configuration)
-        - [Ping Configuration](#ping-configuration)
-        - [Alert Configuration](#alert-configuration)
-    - [Dashboards](#dashboards)
-  	- [Utility Scripts](#utility-scripts)
-  	- [Test Alerts](#test-alerts)
-  - [Security Considerations](#security-considerations)
-  	- [Production Security](#production-security)
-  - [Troubleshooting](#troubleshooting)
-  	- [Mac Users](#mac-users)
+* [Overview](#a-prometheus--grafana-docker-compose-stack)
+* [Pre-requisites](#pre-requisites)
+* [Installation & Configuration](#installation--configuration)
+   * [Post Configuration](#post-configuration)
+      * [Datasource Configuration](#datasource-configuration)
+      * [Ping Configuration](#ping-configuration)
+      * [Alert Configuration](#alert-configuration)
+* [Dashboards](#dashboards)
+    * [Ping Dashboard](#ping-dashboard)
+    * [System Monitoring Dashboard](#system-monitoring-dashboard)
+* [Test Alerts](#test-alerts)
+* [Utility Scripts](#utility-scripts)
+* [Security Considerations](#security-considerations)
+   * [Production Security](#production-security)
+* [Troubleshooting](#troubleshooting)
+   * [Mac Users](#mac-users)
 
 # A Prometheus & Grafana docker-compose stack
 
 Here's a quick start to stand-up a [Prometheus](http://prometheus.io/) stack containing Prometheus, Grafana and to monitor website uptime.
 
 # Pre-requisites
-Before we get started installing the Prometheus stack. Ensure you install the latest version of docker and [docker swarm](https://docs.docker.com/engine/swarm/swarm-tutorial/) on your Docker host machine. Docker Swarm is installed automatically when using Docker for Mac or Docker for Windows.
+
+This tutorial assumes you are running on a Ubuntu 16.04 server. I like using [this](https://www.digitalocean.com/products/one-click-apps/docker/) Digital Ocean image. You can also use your own service provider.
+
+Once you have your Ubuntu node ready, go to the [Installation & Configuration](#installation--configuration) section below.
+
+## Digital Ocean Setup (Optional)
+
+If you already have a [Digital Ocean](https://www.digitalocean.com/) account, you can click [here](https://cloud.digitalocean.com/droplets/new?image=docker) to create a new droplet.
+
+If you don't already have a [Digital Ocean](https://www.digitalocean.com/) account, create one using [this link](https://m.do.co/c/ab4304b8ca5a) to create an account and get **$10 in credits** when you create your account.
+
+For this demo the smallest standard droplet will do.
 
 # Installation & Configuration
 
-    $ curl https://raw.githubusercontent.com/PagerTree/prometheus-grafana-alertmanager-example/master/install.sh | sudo sh
+```curl
+curl https://raw.githubusercontent.com/PagerTree/prometheus-grafana-alertmanager-example/master/install.sh | sudo sh
+```
 
 At this point you'll have automagically deployed the entire Grafana and Prometheus stack. You can now access the Grafana dashboard at `http://<Host IP Address>:3000`. *Note: before the dashboards will work you need to follow the [Datasource Configuration section](#datasource-configuration).*
 
@@ -55,7 +69,7 @@ Now we need to create the Prometheus Datasource in order to connect Grafana to P
         * Access - `proxy`
 * Click `Save & Test`
 
-<img src="images/Add_Data_Source.png" alt="Add Data Source" width="400" heighth="400">
+<img src="images/add-data-source.png" alt="Add Data Source" width="400" heighth="400">
 
 ### Ping Configuration
 
@@ -78,10 +92,12 @@ If you would like to add or change the Ping targets should be monitored you'll w
 
 If you made changes to the Prometheus config you'll want to reload the configuration using the following command:
 
-    $ curl -X POST http://<Host IP Address>:9090/-/reload
+```curl
+curl -X POST http://<Host IP Address>:9090/-/reload
+```
 
 ### Alert Configuration
-You'll want to edit the Webhook configuration in [alertmanager/config.yml](alertmanager/config.yml) to hook up to PagerTree.
+The [PagerTree](https://pagertree.com) configuration requires to create a Prometheus Integration. Follow steps 1-6 [here](https://pagertree.com/knowledge-base/integration-prometheus/#in-pagertree) then replace `<PagerTree WebHook URL>` in [/alertmanager/config.yml](/alertmanager/config.yml) with your copied webhook.
 
 ```yml
 ...
@@ -94,13 +110,25 @@ receivers:
 
 If you made changes to the AlertManager config you'll want to reload the configuration using the following command:
 
-    $ curl -X POST http://<Host IP Address>:9093/-/reload
+```curl
+curl -X POST http://<Host IP Address>:9093/-/reload
+```
 
 ## Dashboards
 
-Included are a couple of dashboards
+Included are two dashboards. You can always find more dashboards on the [Grafana Dashboards Page](https://grafana.com/dashboards?dataSource=prometheus).
 
-You can always find more dashboards on the [Grafana Dashboards Page](https://grafana.com/dashboards?dataSource=prometheus).
+### Ping Dashboard
+
+Shows HTTP uptime from websites monitored. See [Ping Configuration](ping-configuration) section.
+
+<img src="images/dashboard-ping.png" alt="Ping Dashboard" width="400" heighth="400">
+
+### System Monitoring Dashboard
+
+Shows stats like RAM, CPU, Storage of the current node.
+
+<img src="images/dashboard-system-monitoring.png" alt="System Monitoring Dashboard" width="400" heighth="400">
 
 ## Utility Scripts
 
@@ -109,6 +137,7 @@ We've provided some utility scripts in the `util` folder.
 | Script | Args | Description | Example |
 | --- |:---:| --- | --- |
 | docker-log.sh | service | List the logs of a docker service by name | ./util/docker-log.sh grafana |
+| docker-nuke.sh | service | Removes docker services and volumes created by this project | ./util/docker-nuke.sh |
 | docker-ssh.sh | service | SSH into a service container | ./util/docker-ssh.sh grafana |
 | high-load.sh | | Simulate high CPU load on the current computer | ./util/high-load.sh |
 | restart.sh | | Restart all services | ./util/restart.sh |
@@ -117,34 +146,21 @@ We've provided some utility scripts in the `util` folder.
 | stop.sh | | Stop all services | ./util/stop.sh |
 
 ## Alerting
-Alerting has been added to the stack with Slack integration. 2 Alerts have been added and are managed
 
-Alerts              - `prometheus/alert.rules`
-PagerTree Webhook configuration - `alertmanager/config.yml`
+There are 3 basic alerts that have been added to this stack.
 
-The PagerTree configuration requires to create a Prometheus Integration. Follow steps 1-6 [here](https://pagertree.com/knowledge-base/integration-prometheus/#in-pagertree) then replace `<PagerTree WebHook URL>` in [/alertmanager/config.yml](/alertmanager/config.yml) with your copied webhook.
+| Alert | Time To Fire | Description |
+| --- | :---: | --- |
+| Site Down | 30 seconds | Fires if a website check is down |
+| Service Down | 30 seconds | Fires if a service in this setup is down |
+| High Load | 30 seconds | Fires if the CPU load is greater than 50% |
 
-View Prometheus alerts `http://<Host IP Address>:9090/alerts`
-View Alert Manager `http://<Host IP Address>:9093`
+To get alerts sent to you, follow the directions in the [Alert Configuration Section](#alert-configuration).
 
 ### Test Alerts
-A quick test for your alerts is to stop a service. Stop the node_exporter container and you should notice shortly the alert arrive in Slack. Also check the alerts in both the Alert Manager and Prometheus Alerts just to understand how they flow through the system.
+A quick test for your alerts is to simulate high CPU load. Run the utility script `./util/high-load.sh` and about 30 seconds or so later you should notice the incident created in [PagerTree](https://pagertree.com) (assuming you followed the [Alert Configuration Section](#alert-configuration) and you'll also get notifications.
 
-High load test alert - `./util/high-load.sh`
-
-Let this run for a few minutes and you will notice the load alert appear. Then Ctrl+C to stop this command.
-
-## Install Dashboard
-I created a Dashboard template which is available on [Grafana Docker Dashboard](https://grafana.net/dashboards/179). Simply download the dashboard and select from the Grafana menu -> Dashboards -> Import
-
-This dashboard is intended to help you get started with monitoring. If you have any changes you would like to see in the Dashboard let me know so I can update Grafana site as well.
-
-Here's the Dashboard Template
-
-![Grafana Dashboard](https://github.com/vegasbrianc/prometheus/blob/version-2/images/Dashboard.png)
-
-Grafana Dashboard - `dashboards/Grana_Dashboad.json`
-Alerting Dashboard - `dashboards/System_Monitoring.json`
+Then `Ctrl+C` to stop this command. The incident should auto resolve in PagerTree.
 
 # Security Considerations
 This project is intended to be a quick-start to get up and running with Docker and Prometheus. Security has not been implemented in this project. It is the users responsibility to implement Firewall/IpTables and SSL.
