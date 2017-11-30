@@ -25,7 +25,9 @@ chmod +x ./util/*.sh
 echo "Starting Application"
 docker stack deploy -c docker-compose.yml prom
 
+echo "Waiting 5 seconds for services to come up"
 sleep 5
-while docker service ls | grep "0/1"; echo "Waiting 5 seconds for services to come up"; do sleep 5; done;
+
+while docker service ls | grep "0/1";  do sleep 3; echo "Waiting"; done;
 
 echo "You can now access your Grafana dashboard at http://$ADDRESS:3000"
