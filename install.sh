@@ -6,7 +6,7 @@ install () {
   apt-get -y install docker-ce
   docker swarm init --advertise-addr=$(ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
 
-  apt-get -y install git-all
+  apt-get -y install git
 
   DIRECTORY="prometheus-grafana-alertmanager-example"
   if [ -d "$DIRECTORY" ]; then
