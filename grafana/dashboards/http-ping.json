@@ -694,6 +694,6 @@
   },
   "timezone": "browser",
   "title": "HTTP Ping",
-  "id": 1
+  "id": 1,
   "version": 1
 }
