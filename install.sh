@@ -3,6 +3,7 @@
 install () {
   apt-get update
 
+  apt-get -y install docker.io
   apt-get -y install docker-ce
   docker swarm init --advertise-addr=$(ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
 
