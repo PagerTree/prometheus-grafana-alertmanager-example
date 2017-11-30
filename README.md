@@ -69,7 +69,7 @@ Now we need to create the Prometheus Datasource in order to connect Grafana to P
         * Access - `proxy`
 * Click `Save & Test`
 
-<img src="images/add-data-source.png" alt="Add Data Source" width="400" heighth="400">
+<img src="images/add-data-source.png" alt="Add Data Source">
 
 ### Ping Configuration
 
@@ -122,13 +122,13 @@ Included are two dashboards. You can always find more dashboards on the [Grafana
 
 Shows HTTP uptime from websites monitored. See [Ping Configuration](ping-configuration) section.
 
-<img src="images/dashboard-ping.png" alt="Ping Dashboard" width="400" heighth="400">
+<img src="images/dashboard-ping.png" alt="Ping Dashboard">
 
 ### System Monitoring Dashboard
 
 Shows stats like RAM, CPU, Storage of the current node.
 
-<img src="images/dashboard-system-monitoring.png" alt="System Monitoring Dashboard" width="400" heighth="400">
+<img src="images/dashboard-system-monitoring.png" alt="System Monitoring Dashboard">
 
 ## Utility Scripts
 
