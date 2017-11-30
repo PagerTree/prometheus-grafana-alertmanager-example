@@ -87,4 +87,8 @@ services:
     image: prom/blackbox-exporter
     ports:
       - 9115:9115
+    volumes:
+      - ./blackboxexporter/:/etc/blackboxexporter/
+    command:
+      - '--config.file=/etc/blackboxexporter/config.yml'
     restart: always
