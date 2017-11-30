@@ -5,18 +5,21 @@
   - [Pre-requisites](#pre-requisites)
   - [Installation & Configuration](#installation--configuration)
   	- [Post Configuration](#post-configuration)
-  	- [Alerting](#alerting)
+        - [Datasource Configuration](#datasource-configuration)
+        - [Ping Configuration](#ping-configuration)
+        - [Alert Configuration](#alert-configuration)
+    - [Dashboards](#dashboards)
+  	- [Utility Scripts](#utility-scripts)
   	- [Test Alerts](#test-alerts)
   	- [Install Dashboard](#install-dashboard)
   - [Security Considerations](#security-considerations)
   	- [Production Security](#production-security)
   - [Troubleshooting](#troubleshooting)
   	- [Mac Users](#mac-users)
-  - [Interesting Projects that use this Repo](#interesting-projects-that-use-this-repo)
 
 # A Prometheus & Grafana docker-compose stack
 
-Here's a quick start to stand-up a [Prometheus](http://prometheus.io/) stack containing Prometheus, Grafana and Node scraper to monitor your Docker infrastructure.
+Here's a quick start to stand-up a [Prometheus](http://prometheus.io/) stack containing Prometheus, Grafana and to monitor website uptime.
 
 # Pre-requisites
 Before we get started installing the Prometheus stack. Ensure you install the latest version of docker and [docker swarm](https://docs.docker.com/engine/swarm/swarm-tutorial/) on your Docker host machine. Docker Swarm is installed automatically when using Docker for Mac or Docker for Windows.
@@ -25,54 +28,87 @@ Before we get started installing the Prometheus stack. Ensure you install the la
 
     $ curl https://raw.githubusercontent.com/PagerTree/prometheus-grafana-alertmanager-example/master/install.sh | sudo sh
 
-This will create several services:
+At this point you'll have automagically deployed the entire Grafana and Prometheus stack. You can now access the Grafana dashboard at `http://<Host IP Address>:3000`. *Note: before the dashboards will work you need to follow the [Datasource Configuration section](#datasource-configuration).*
 
-| Service | Port | Description |
-| --- |:---:| ---:|
-| Prometheus | :9090 | Data Aggregator |
-| Alert Manager | :9093 | Adds Alerting for Prometheus Checks |
-| Grafana | :3000 | UI To Show Prometheus Data |
-| Node Exporter | :9100 | Data Collector |
-| CA Advisor | :8080 | Collect resource usage of the Docker container |
+Here's a list of all the services that are created:
 
-
-If you would like to change which targets should be monitored or make configuration changes edit the [/prometheus/prometheus.yml](/prometheus/prometheus.yml) file. The targets section is where you define what should be monitored by Prometheus.
-
-That's it the install script deploys the entire Grafana and Prometheus stack automagically to the Docker Swarm. By default cAdvisor and node-exporter are set to Global deployment which means they will propogate to every docker host attached to the Swarm.
-
-The Grafana Dashboard is now accessible via: `http://<Host IP Address>:3000` for example http://192.168.10.1:3000
-
-	username - admin
-	password - foobar (Password is stored in the `config.monitoring` env file)
-
-In order to check the status of the newly created stack:
-
-    $ ./status.sh
-
+| Service | Port | Description | Notes |
+| --- |:---:| --- | --- |
+| Prometheus | :9090 | Data Aggregator | |
+| Alert Manager | :9093 | Adds Alerting for Prometheus Checks | |
+| Grafana | :3000 | UI To Show Prometheus Data | Username: `admin`, Password: `9uT46ZKE`|
+| Node Exporter | :9100 | Data Collector for Computer Stats | |
+| CA Advisor | :8080 | Collect resource usage of the Docker container | |
+| Blackbox Exporter | :9115 | Data Collector for Ping & Uptime | | |
 
 ## Post Configuration
+
+### Datasource Configuration
 Now we need to create the Prometheus Datasource in order to connect Grafana to Prometheus
 * Click the `Grafana` Menu at the top left corner (looks like a fireball)
 * Click `Data Sources`
 * Click the green button `Add Data Source`.
+* Input the following parameters **exactly as shown**
+    * Name - `Prometheus`, Default - `checked`
+    * Type - `Prometheus`
+    * HTTP settings
+        * URL - `http://prometheus:9090`
+        * Access - `proxy`
+* Click `Save & Test`
 
-<img src="https://github.com/vegasbrianc/prometheus/blob/version-2/images/Add_Data_Source.png" width="400" heighth="400">
+<img src="images/Add_Data_Source.png" alt="Add Data Source" width="400" heighth="400">
+
+### Ping Configuration
+
+If you would like to add or change the Ping targets should be monitored you'll want to edit the `targets` section in [prometheus/prometheus.yml](prometheus/prometheus.yml)
+
+```yml
+...
+
+- job_name: 'blackbox'
+  metrics_path: /probe
+  params:
+    module: [http_2xx]
+  static_configs:
+    - targets:
+      - https://pagertree.com # edit here
+      - https://google.com # edit here
+
+...
+```
+
+### Alert Configuration
+You'll want to edit the Webhook configuration in [alertmanager/config.yml](alertmanager/config.yml) to hook up to PagerTree.
+
+```yml
+...
+receivers:
+    - name: 'pager'
+      webhook_configs:
+      - url: <PagerTree WebHook URL> # replace with your PagerTree webhook url
+...
+```
+
+## Utility Scripts
+We've provided some utility scripts in the `util` folder.
+
+| Script | Args | Description | Example |
+| --- |:---:| --- | --- |
+| docker-log.sh | service | List the logs of a docker service by name | ./util/docker-log.sh grafana |
+| docker-ssh.sh | service | SSH into a service container | ./util/docker-ssh.sh grafana |
+| high-load.sh | | Simulate high CPU load on the current computer | ./util/high-load.sh |
+| restart.sh | | Restart all services | ./util/restart.sh |
+| start.sh | | Start all services | ./util/start.sh |
+| status.sh | | Print status all services | ./util/status.sh |
+| stop.sh | | Stop all services | ./util/stop.sh |
 
 ## Alerting
 Alerting has been added to the stack with Slack integration. 2 Alerts have been added and are managed
 
 Alerts              - `prometheus/alert.rules`
-Slack configuration - `alertmanager/config.yml`
+PagerTree Webhook configuration - `alertmanager/config.yml`
 
-The Slack configuration requires to build a custom integration.
-* Open your slack team in your browser `https://<your-slack-team>.slack.com/apps`
-* Click build in the upper right corner
-* Choose Incoming Web Hooks link under Send Messages
-* Click on the "incoming webhook integration" link
-* Select which channel
-* Click on Add Incoming WebHooks integration
-* Copy the Webhook URL into the `alertmanager/config.yml` URL section
-* Fill in Slack username and channel
+The PagerTree configuration requires to create a Prometheus Integration. Follow steps 1-6 [here](https://pagertree.com/knowledge-base/integration-prometheus/#in-pagertree) then replace `<PagerTree WebHook URL>` in [/alertmanager/config.yml](/alertmanager/config.yml) with your copied webhook.
 
 View Prometheus alerts `http://<Host IP Address>:9090/alerts`
 View Alert Manager `http://<Host IP Address>:9093`
@@ -80,9 +116,9 @@ View Alert Manager `http://<Host IP Address>:9093`
 ### Test Alerts
 A quick test for your alerts is to stop a service. Stop the node_exporter container and you should notice shortly the alert arrive in Slack. Also check the alerts in both the Alert Manager and Prometheus Alerts just to understand how they flow through the system.
 
-High load test alert - `docker run --rm -it busybox sh -c "while true; do :; done"`
+High load test alert - `./util/high-load.sh`
 
-Let this run for a few minutes and you will notice the load alert appear. Then Ctrl+C to stop this container.
+Let this run for a few minutes and you will notice the load alert appear. Then Ctrl+C to stop this command.
 
 ## Install Dashboard
 I created a Dashboard template which is available on [Grafana Docker Dashboard](https://grafana.net/dashboards/179). Simply download the dashboard and select from the Grafana menu -> Dashboards -> Import
@@ -97,13 +133,13 @@ Grafana Dashboard - `dashboards/Grana_Dashboad.json`
 Alerting Dashboard - `dashboards/System_Monitoring.json`
 
 # Security Considerations
-This project is intended to be a quick-start to get up and running with Docker and Prometheus. Security has not been implemented in this project. It is the users responsability to implement Firewall/IpTables and SSL.
+This project is intended to be a quick-start to get up and running with Docker and Prometheus. Security has not been implemented in this project. It is the users responsibility to implement Firewall/IpTables and SSL.
 
 Since this is a template to get started Prometheus and Alerting services are exposing their ports to allow for easy troubleshooting and understanding of how the stack works.
 
 ## Production Security:
 Here are just a couple security considerations for this stack to help you get started.
-* Remove the published ports from Prometheus and Alerting servicesi and only allow Grafana to be accessed
+* Remove the published ports from Prometheus and Alerting services and only allow Grafana to be accessed
 * Enable SSL for Grafana with a Proxy such as [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy/) or [Traefik](https://traefik.io/) with Let's Encrypt
 * Add user authentication via a Reverse Proxy [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy/) or [Traefik](https://traefik.io/) for services cAdvisor, Prometheus, & Alerting as they don't support user authenticaiton
 * Terminate all services/containers via HTTPS/SSL/TLS
@@ -112,13 +148,4 @@ Here are just a couple security considerations for this stack to help you get st
 It appears some people have reported no data appearing in Grafana. If this is happening to you be sure to check the time range being queried within Grafana to ensure it is using Today's date with current time.
 
 ## Mac Users
-The node-exporter does not run the same as Mac and Linux. Node-Exporter is not designed to run on Mac and in fact cannot collect metrics from the Mac OS due to the differences between Mac and Linux OS's. I recommend you comment out the node-exporter section in the `docker-compose.yml` file and instead just use the cAdvisor.
-
-# Interesting Projects that use this Repo
-Several projects utilize this Prometheus stack. Here's the list of projects:
-
-* [Docker Pulls](https://github.com/vegasbrianc/docker-pulls) - Visualize Docker-Hub pull statistics with Prometheus
-* [GitHub Monitoring](https://github.com/vegasbrianc/github-monitoring) - Monitor your GitHub projects with Prometheus
-* [Traefik Reverse Proxy/Load Balancer Monitoring](https://github.com/vegasbrianc/docker-traefik-prometheus) - Monitor the popular Reverse Proxy/Load Balancer Traefik with Prometheus
-
-*Have an intersting Project which use this Repo? Submit yours to the list*
+Node-Exporter is not designed to run on Mac and in fact cannot collect metrics from the Mac OS. I recommend you comment out the node-exporter section in the [docker-compose.yml](docker-compose.yml) file and instead just use the cAdvisor.

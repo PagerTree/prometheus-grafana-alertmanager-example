@@ -7,10 +7,8 @@ install () {
   git clone https://github.com/PagerTree/prometheus-grafana-alertmanager-example.git
   cd prometheus-grafana-alertmanager-example
 
-  chmod +x *.sh
-  ./start.sh
-  
-
+  chmod +x ./util/*.sh
+  ./util/start.sh
 }
 
 install
