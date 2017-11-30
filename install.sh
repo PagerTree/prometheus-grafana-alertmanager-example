@@ -22,6 +22,5 @@ chmod +x ./util/*.sh
 
 echo "Starting Application"
 docker stack deploy -c docker-compose.yml prom
-echo "Waiting 30 seconds for services to come up"
-sleep 30
-./util/status.sh
+
+while docker service ls | grep "0/1"; do sleep 5; echo "Waiting 5 seconds for services to come up"; done;
