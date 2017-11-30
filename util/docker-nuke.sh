@@ -1,5 +1,4 @@
 #!/bin/sh
 
-docker rm -v $(docker ps -aq)
-docker rmi $(docker images -q)
-docker volume rm $(docker volume ls -q)
+docker rm -v $(docker ps -f "name=prom" -aq)
+docker volume rm $(docker volume ls -f "name=prom" -q)
