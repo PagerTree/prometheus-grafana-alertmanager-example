@@ -19,7 +19,7 @@
 
 # A Prometheus & Grafana docker-compose stack
 
-Here's a quick start to stand-up a [Prometheus](http://prometheus.io/) stack containing Prometheus, Grafana and to monitor website uptime.
+Here's a quick start to stand-up a [Prometheus](http://prometheus.io/) stack containing Prometheus, [Grafana](https://grafana.com/) and to monitor website uptime.
 
 # Pre-requisites
 
@@ -36,12 +36,12 @@ If you don't already have a [Digital Ocean](https://www.digitalocean.com/) accou
 For this demo the smallest standard droplet will do.
 
 # Installation & Configuration
-
+For a one click install experience run the following command:
 ```curl
 curl https://raw.githubusercontent.com/PagerTree/prometheus-grafana-alertmanager-example/master/install.sh -H 'Cache-Control: no-cache' | sudo sh
 ```
 
-At this point you'll have automagically deployed the entire Grafana and Prometheus stack. You can now access the Grafana dashboard at `http://<Host IP Address>:3000`. *Note: before the dashboards will work you need to follow the [Datasource Configuration section](#datasource-configuration).*
+At this point you'll have automagically deployed the entire Grafana and Prometheus stack. You can now access the Grafana dashboard at `http://<Host IP Address>:3000` *Username: `admin`, Password: `9uT46ZKE`*. *Note: before the dashboards will work you need to follow the [Datasource Configuration section](#datasource-configuration).*
 
 Here's a list of all the services that are created:
 
