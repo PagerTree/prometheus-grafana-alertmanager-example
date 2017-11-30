@@ -11,7 +11,6 @@
     - [Dashboards](#dashboards)
   	- [Utility Scripts](#utility-scripts)
   	- [Test Alerts](#test-alerts)
-  	- [Install Dashboard](#install-dashboard)
   - [Security Considerations](#security-considerations)
   	- [Production Security](#production-security)
   - [Troubleshooting](#troubleshooting)
@@ -77,6 +76,10 @@ If you would like to add or change the Ping targets should be monitored you'll w
 ...
 ```
 
+If you made changes to the Prometheus config you'll want to reload the configuration using the following command:
+
+    $ curl -X POST http://<Host IP Address>:9090/-/reload
+
 ### Alert Configuration
 You'll want to edit the Webhook configuration in [alertmanager/config.yml](alertmanager/config.yml) to hook up to PagerTree.
 
@@ -89,7 +92,18 @@ receivers:
 ...
 ```
 
+If you made changes to the AlertManager config you'll want to reload the configuration using the following command:
+
+    $ curl -X POST http://<Host IP Address>:9093/-/reload
+
+## Dashboards
+
+Included are a couple of dashboards
+
+You can always find more dashboards on the [Grafana Dashboards Page](https://grafana.com/dashboards?dataSource=prometheus).
+
 ## Utility Scripts
+
 We've provided some utility scripts in the `util` folder.
 
 | Script | Args | Description | Example |
