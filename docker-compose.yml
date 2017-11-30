@@ -55,7 +55,6 @@ services:
     command:
       - '-config.file=/etc/alertmanager/config.yml'
       - '-storage.path=/alertmanager'
-      - '--web.enable-lifecycle'
     deploy:
       mode: global
 
