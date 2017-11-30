@@ -11,8 +11,6 @@ modules:
       fail_if_not_ssl: false
       fail_if_matches_regexp:
         - "Could not connect to database"
-      fail_if_not_matches_regexp:
-        - "Download the latest version here"
       tls_config:
         insecure_skip_verify: false
       preferred_ip_protocol: "ip4" # defaults to "ip6"
