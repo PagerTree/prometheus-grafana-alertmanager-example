@@ -4,7 +4,9 @@ apt-get update
 echo "Installing Docker"
 apt-get -y install docker.io
 apt-get -y install docker-ce
-docker swarm init --advertise-addr=$(ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
+
+ADDRESS=$(ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
+docker swarm init --advertise-addr="$ADDRESS"
 
 echo "Installing Git"
 apt-get -y install git
@@ -24,4 +26,6 @@ echo "Starting Application"
 docker stack deploy -c docker-compose.yml prom
 
 sleep 5
-while docker service ls | grep "0/1"; do sleep 5; echo "Waiting 5 seconds for services to come up"; done;
+while docker service ls | grep "0/1"; echo "Waiting 5 seconds for services to come up"; do sleep 5; done;
+
+echo "You can now access your Grafana dashboard at http://$ADDRESS:3000"
