@@ -12,8 +12,8 @@ install () {
   if [ -d "$DIRECTORY" ]; then
     rm -rf "$DIRECTORY"
   fi
-  cd "$DIRECTORY"
   git clone https://github.com/PagerTree/prometheus-grafana-alertmanager-example.git
+  cd "$DIRECTORY"
 
   chmod +x ./util/*.sh
   ./util/start.sh
