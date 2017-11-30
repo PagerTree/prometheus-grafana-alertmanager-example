@@ -1,15 +1,19 @@
 #!/bin/sh
 apt-get update
 
-echo "Installing Docker"
-apt-get -y install docker.io
-apt-get -y install docker-ce
+if ! type "docker" > /dev/null; then
+  echo "Installing Docker"
+  apt-get -y install docker.io
+  apt-get -y install docker-ce
+fi
 
 ADDRESS=$(ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
 docker swarm init --advertise-addr="$ADDRESS"
 
-echo "Installing Git"
-apt-get -y install git
+if ! type "git" > /dev/null; then
+  echo "Installing Git"
+  apt-get -y install git
+fi
 
 DIRECTORY="prometheus-grafana-alertmanager-example"
 if [ -d "$DIRECTORY" ]; then
@@ -28,6 +32,6 @@ docker stack deploy -c docker-compose.yml prom
 echo "Waiting 5 seconds for services to come up"
 sleep 5
 
-while docker service ls | grep "0/1";  do sleep 3; echo "Waiting"; done;
+while docker service ls | grep "0/1";  do sleep 3; echo "Waiting..."; done;
 
 echo "You can now access your Grafana dashboard at http://$ADDRESS:3000"
