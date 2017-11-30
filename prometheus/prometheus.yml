@@ -49,6 +49,7 @@ scrape_configs:
       - targets:
         - https://pagertree.com
         - https://www.google.com
+        - https://prometheus.io
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
