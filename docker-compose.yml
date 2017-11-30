@@ -88,7 +88,6 @@ services:
     ports:
       - 9115:9115
     volumes:
-      - blackboxexporter_data:/var/lib/blackboxexporter
       - ./blackboxexporter/:/etc/blackboxexporter/
     command:
       - '--config.file=/etc/blackboxexporter/config.yml'
