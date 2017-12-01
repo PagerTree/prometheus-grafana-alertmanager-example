@@ -12,7 +12,7 @@ groups:
       description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 30 seconds."
 
   - alert: high_load
-    expr: node_load1 > 0.5
+    expr: node_load1 > 0.8
     for: 30s
     labels:
       severity: page
