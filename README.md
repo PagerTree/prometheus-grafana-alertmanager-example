@@ -33,7 +33,9 @@ If you already have a [Digital Ocean](https://www.digitalocean.com/) account, yo
 
 If you don't already have a [Digital Ocean](https://www.digitalocean.com/) account, create one using [this link](https://m.do.co/c/ab4304b8ca5a) to create an account and get **$10 in credits** when you create your account.
 
-For this demo the smallest standard droplet will do.
+For this demo the smallest standard droplet will do. Here's a small demo on how to get it started.
+
+![Create a Droplet](images/create-a-droplet.gif)
 
 # Installation & Configuration
 For a one click install experience run the following command:
