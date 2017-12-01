@@ -21,6 +21,8 @@
 
 Here's a quick start to stand-up a [Prometheus](http://prometheus.io/) stack containing Prometheus, [Grafana](https://grafana.com/) and to monitor website uptime.
 
+Here are links to the [blog](https://pagertree.com/2017/12/01/prometheus-tutorial/) and [video](https://youtu.be/-STqqJZG36w) tutorials so you can follow along.
+
 # Pre-requisites
 
 This tutorial assumes you are running on a Ubuntu 16.04 server. I like using [this](https://www.digitalocean.com/products/one-click-apps/docker/) Digital Ocean image. You can also use your own service provider.
