@@ -33,9 +33,7 @@ If you already have a [Digital Ocean](https://www.digitalocean.com/) account, yo
 
 If you don't already have a [Digital Ocean](https://www.digitalocean.com/) account, create one using [this link](https://m.do.co/c/ab4304b8ca5a) to create an account and get **$10 in credits** when you create your account.
 
-For this demo the smallest standard droplet will do. Here's a small demo on how to get it started.
-
-![Create a Droplet](images/create-a-droplet.gif)
+For this demo the smallest standard droplet will do. If you don't know how to create a droplet or how to SSH into it you can follow my  [demo on Medium](https://medium.com/@armiiller/create-a-docker-droplet-on-digital-ocean-f19db2b4be53).
 
 # Installation & Configuration
 For a one click install experience run the following command:
