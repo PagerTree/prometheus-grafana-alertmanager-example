@@ -1,2 +1,2 @@
 #!/bin/sh
-sed 's/<PagerTree WebHook URL>/$1/' ./alertmanager/config.yml
+sed -i "s|<PagerTree WebHook URL>|$1|" ./alertmanager/config.yml
