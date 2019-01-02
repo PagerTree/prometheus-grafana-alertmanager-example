@@ -99,14 +99,14 @@ curl -X POST http://<Host IP Address>:9090/-/reload
 ```
 
 ### Alert Configuration
-The [PagerTree](https://pagertree.com) configuration requires to create a Prometheus Integration. Follow steps 1-6 [here](https://pagertree.com/knowledge-base/integration-prometheus/#in-pagertree) then replace `<PagerTree WebHook URL>` in [/alertmanager/config.yml](/alertmanager/config.yml) with your copied webhook.
+The [PagerTree](https://pagertree.com) configuration requires to create a Prometheus Integration. Follow steps 1-6 [here](https://pagertree.com/knowledge-base/integration-prometheus/#in-pagertree) then replace `https://ngrok.io` in [/alertmanager/config.yml](/alertmanager/config.yml) with your copied webhook.
 
 ```yml
 ...
 receivers:
     - name: 'pager'
       webhook_configs:
-      - url: <PagerTree WebHook URL> # replace with your PagerTree webhook url
+      - url: https://ngrok.io # replace with your PagerTree webhook url
 ...
 ```
 
