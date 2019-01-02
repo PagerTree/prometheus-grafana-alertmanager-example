@@ -46,7 +46,7 @@ services:
       mode: global
 
   alertmanager:
-    image: prom/alertmanager
+    image: prom/alertmanager:v0.12.0
     ports:
       - 9093:9093
     volumes:
