@@ -46,7 +46,7 @@ services:
       mode: global
 
   alertmanager:
-    image: prom/alertmanager
+    image: prom/alertmanager:v0.12.0
     ports:
       - 9093:9093
     volumes:
@@ -72,7 +72,7 @@ services:
       mode: global
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:4.6.3
     depends_on:
       - prometheus
     ports:
