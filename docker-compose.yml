@@ -80,6 +80,7 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/provisioning:/etc/grafana/provisioning
     env_file:
       - config.monitoring
 
