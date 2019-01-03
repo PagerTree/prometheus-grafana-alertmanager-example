@@ -58,21 +58,6 @@ Here's a list of all the services that are created:
 
 ## Post Configuration
 
-### Datasource Configuration
-Now we need to create the Prometheus Datasource in order to connect Grafana to Prometheus
-* Click the `Grafana` Menu at the top left corner (looks like a fireball)
-* Click `Data Sources`
-* Click the green button `Add Data Source`.
-* Input the following parameters **exactly as shown**
-    * Name - `Prometheus`, Default - `checked`
-    * Type - `Prometheus`
-    * HTTP settings
-        * URL - `http://prometheus:9090`
-        * Access - `proxy`
-* Click `Save & Test`
-
-<img src="images/add-data-source.png" alt="Add Data Source">
-
 ### Ping Configuration
 
 If you would like to add or change the Ping targets should be monitored you'll want to edit the `targets` section in [prometheus/prometheus.yml](prometheus/prometheus.yml)

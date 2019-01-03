@@ -72,7 +72,7 @@ services:
       mode: global
 
   grafana:
-    image: grafana/grafana:4.6.3
+    image: grafana/grafana:5.4.2
     depends_on:
       - prometheus
     ports:
@@ -80,6 +80,7 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/provisioning:/etc/grafana/provisioning
     env_file:
       - config.monitoring
 
