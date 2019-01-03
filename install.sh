@@ -20,7 +20,7 @@ if [ -d "$DIRECTORY" ]; then
   rm -rf "$DIRECTORY"
 fi
 echo "Cloning Project"
-git clone --single-branch --branch grafana-5.4.2 https://github.com/PagerTree/prometheus-grafana-alertmanager-example.git
+git clone https://github.com/PagerTree/prometheus-grafana-alertmanager-example.git
 cd "$DIRECTORY"
 
 echo "Making Utility scripts executable"
