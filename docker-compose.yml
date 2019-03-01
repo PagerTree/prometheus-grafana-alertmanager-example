@@ -85,7 +85,7 @@ services:
       - config.monitoring
 
   blackbox_exporter:
-    image: prom/blackbox-exporter
+    image: prom/blackbox-exporter:v0.10.0
     ports:
       - 9115:9115
     volumes:
