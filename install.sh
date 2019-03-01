@@ -7,7 +7,14 @@ if ! type "docker" > /dev/null; then
   apt-get -y install docker-ce
 fi
 
+# get ips | search inet addr: | split on : get 2nd field | print out
 ADDRESS=$(ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}')
+# if we have an emtpy address
+if [[ -z "${ADDRESS// }"]]
+  # some prints won't have the addr portion, do a last ditch effort to get the ip
+  # get ips | search inet | get first line | trim string | split on ' ' get the 2nd field | print out
+  ADDRESS=$(ifconfig eth0 | grep 'inet' | awk 'NR == 1' | awk '{$1=$1};1' | cut -d ' ' -f 2 | awk '{ print $1}')
+fi
 docker swarm init --advertise-addr="$ADDRESS"
 
 if ! type "git" > /dev/null; then
