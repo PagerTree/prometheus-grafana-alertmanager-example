@@ -1,4 +1,5 @@
 #!/bin/sh
-./util/stop.sh
+script=$0
+$(dirname "$script")/stop.sh
 sleep 5
-./util/start.sh
+$(dirname "$script")/start.sh
