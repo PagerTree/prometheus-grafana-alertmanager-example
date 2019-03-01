@@ -1,4 +1,5 @@
 #!/bin/sh
-docker stack deploy -c docker-compose.yml prom
+script=$0
+docker stack deploy -c $(dirname "$script")/../docker-compose.yml prom
 sleep 3
-./util/status.sh
+$(dirname "$script")/status.sh
